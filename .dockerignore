@@ -1,0 +1,7 @@
+.git
+.gitignore
+.env
+my_log/Procfile
+my_log/runtime.txt
+my_log/db.sqlite3
+README.md

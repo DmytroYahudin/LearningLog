@@ -1,0 +1,2 @@
+# This file is needed for adding static directory to the project directory blog_django/static/
+# Django collects static files and places them into blog_django/static/
