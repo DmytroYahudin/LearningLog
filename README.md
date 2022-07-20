@@ -19,7 +19,7 @@ Clone repository from GitHub via command:
 git clone https://github.com/DmytroYahudin/LearningLog.git
 ```
 In order to build docker container you need to installed [Docker](https://docs.docker.com/compose/gettingstarted/) in your system.
-Make sure that Docker is installed on your pc and build the image and run the container:
+Make sure that Docker is installed on your PC, build the image and run the container:\
 Linux:
 ```bash
 sudo docker build --tag my_log .
