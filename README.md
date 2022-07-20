@@ -47,6 +47,10 @@ There are 50 test cases already written in the application. In order to run the 
 ```bash
 docker exec -w /app_log/my_log -it log_app python manage.py test
 ```
+To get more info about the test cases you can run the command with the higher level of details in the output:
+```bash
+docker exec -w /app_log/my_log -it log_app python manage.py test --verbosity 2
+```
 
 ## Usage
 
