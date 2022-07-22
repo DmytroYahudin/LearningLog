@@ -1,6 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
-
+from django.db import models
 
 # Create your models here.
 
@@ -21,7 +20,7 @@ class Entry(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = 'entries'
+        verbose_name_plural = "entries"
 
     def __str__(self):
         return self.text[:50] + "..."

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Topic, Entry
+
+from .models import Entry, Topic
 
 # My registered models.
 admin.site.register(Topic)

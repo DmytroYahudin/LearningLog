@@ -1,38 +1,39 @@
-from django.test import TestCase
-from django.contrib.auth.models import User
 import time
-from ..models import Topic, Entry
+
+from django.contrib.auth.models import User
+from django.test import TestCase
+
+from ..models import Entry, Topic
 
 
 class TopicModelTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
-        user = User.objects.create_user(username='testuser', password='123')
+        user = User.objects.create_user(username="testuser", password="123")
         user.save()
-        Topic.objects.create(text='Test Topic', owner=user)
+        Topic.objects.create(text="Test Topic", owner=user)
 
     def setUp(self) -> None:
         pass
 
     def test_text_label(self):
         topic = Topic.objects.get(pk=1)
-        field_label = topic._meta.get_field('text').verbose_name
-        self.assertEqual(field_label, 'text')
+        field_label = topic._meta.get_field("text").verbose_name
+        self.assertEqual(field_label, "text")
 
     def test_date_added_label(self):
         topic = Topic.objects.get(pk=1)
-        date_field_label = topic._meta.get_field('date_added').verbose_name
-        self.assertEqual(date_field_label, 'date added')
+        date_field_label = topic._meta.get_field("date_added").verbose_name
+        self.assertEqual(date_field_label, "date added")
 
     def test_text_max_length(self):
         topic = Topic.objects.get(pk=1)
-        text_length = topic._meta.get_field('text').max_length
+        text_length = topic._meta.get_field("text").max_length
         self.assertEqual(text_length, 200)
 
     def test_check_owner(self):
         topic = Topic.objects.get(pk=1)
-        self.assertEqual(str(topic.owner), 'testuser')
+        self.assertEqual(str(topic.owner), "testuser")
 
     def test_obj_name_is_text(self):
         topic = Topic.objects.get(pk=1)
@@ -41,28 +42,27 @@ class TopicModelTest(TestCase):
 
 
 class EntryModelTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
-        user = User.objects.create_user(username='testuser', password='123')
+        user = User.objects.create_user(username="testuser", password="123")
         user.save()
-        topic = Topic.objects.create(text='Test Topic', owner=user)
+        topic = Topic.objects.create(text="Test Topic", owner=user)
         topic.save()
         time.sleep(0.01)
-        Entry.objects.create(topic=topic, text='testtesttesttesttest', owner=user)
+        Entry.objects.create(topic=topic, text="testtesttesttesttest", owner=user)
 
     def setUp(self) -> None:
         pass
 
     def test_text_label(self):
         entry = Entry.objects.get(pk=1)
-        field_label = entry._meta.get_field('text').verbose_name
-        self.assertEqual(field_label, 'text')
+        field_label = entry._meta.get_field("text").verbose_name
+        self.assertEqual(field_label, "text")
 
     def test_topic_label(self):
         entry = Entry.objects.get(pk=1)
-        field_label = entry._meta.get_field('topic').verbose_name
-        self.assertEqual(field_label, 'topic')
+        field_label = entry._meta.get_field("topic").verbose_name
+        self.assertEqual(field_label, "topic")
 
     def test_entry_owner_is_topic_owner(self):
         entry = Entry.objects.get(pk=1)
@@ -72,7 +72,7 @@ class EntryModelTest(TestCase):
     def test_verbose_name_plural(self):
         entry = Entry.objects.get(pk=1)
         expected_verbose_name_plural = entry._meta.verbose_name_plural
-        self.assertEqual(expected_verbose_name_plural, 'entries')
+        self.assertEqual(expected_verbose_name_plural, "entries")
 
     def test_obj_name_is_text(self):
         entry = Entry.objects.get(pk=1)

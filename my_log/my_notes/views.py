@@ -1,14 +1,15 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, Http404
+from datetime import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, DeleteView
-from datetime import datetime
-#
-from .models import Topic, Entry
-from .forms import TopicForm, EntryForm
+from django.views.generic import DeleteView, TemplateView
 
+from .forms import EntryForm, TopicForm
+#
+from .models import Entry, Topic
 
 # My Class Based views.
 
@@ -22,30 +23,30 @@ class Topics(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['themes'] = Topic.objects.order_by('date_added')
+        context["themes"] = Topic.objects.order_by("date_added")
         return context
 
 
 class Theme(LoginRequiredMixin, TemplateView):
-    login_url = '/users/login/'
+    login_url = "/users/login/"
     template_name = "my_notes/topic.html"
 
     def get_context_data(self, topic_id, **kwargs):
         topic = get_object_or_404(Topic, id=topic_id)
         context = super().get_context_data(**kwargs)
-        context['topic'] = topic
-        context['entries'] = topic.topic.order_by('-date_added')
+        context["topic"] = topic
+        context["entries"] = topic.topic.order_by("-date_added")
         return context
 
 
 class NewTopic(LoginRequiredMixin, View):
-    login_url = '/users/login/'
+    login_url = "/users/login/"
     form_class = TopicForm
     template_name = "my_notes/new_topic.html"
 
     def get(self, request):
         form = self.form_class()
-        context = {'form': form}
+        context = {"form": form}
         return render(request, self.template_name, context)
 
     def post(self, request):
@@ -54,11 +55,11 @@ class NewTopic(LoginRequiredMixin, View):
             new_theme = form.save(commit=False)
             new_theme.owner = request.user
             new_theme.save()
-            return HttpResponseRedirect(reverse('my_notes:topics'))
+            return HttpResponseRedirect(reverse("my_notes:topics"))
 
 
 class NewEntry(LoginRequiredMixin, View):
-    login_url = '/users/login/'
+    login_url = "/users/login/"
     form_class = EntryForm
     template_name = "my_notes/new_entry.html"
 
@@ -67,7 +68,7 @@ class NewEntry(LoginRequiredMixin, View):
         if topic.owner != request.user:
             raise Http404("You can't add entries outside your own topics.")
         form = self.form_class()
-        context = {'topic': topic, 'form': form}
+        context = {"topic": topic, "form": form}
         return render(request, self.template_name, context)
 
     def post(self, request, topic_id):
@@ -78,12 +79,12 @@ class NewEntry(LoginRequiredMixin, View):
             entry.topic = topic
             entry.owner = topic.owner
             entry.save()
-            return HttpResponseRedirect(reverse('my_notes:topic', args=(topic_id,)))
+            return HttpResponseRedirect(reverse("my_notes:topic", args=(topic_id,)))
 
 
 class EditEntry(LoginRequiredMixin, View):
-    login_url = '/users/login/'
-    template_name = 'my_notes/edit_entry.html'
+    login_url = "/users/login/"
+    template_name = "my_notes/edit_entry.html"
     form_class = EntryForm
 
     def get(self, request, entry_id):
@@ -92,7 +93,7 @@ class EditEntry(LoginRequiredMixin, View):
             raise Http404("You can edit your own entries only.")
         topic = entry.topic
         form = self.form_class(instance=entry)
-        context = {'entry': entry, 'topic': topic, 'form': form}
+        context = {"entry": entry, "topic": topic, "form": form}
         return render(request, self.template_name, context)
 
     def post(self, request, entry_id):
@@ -101,16 +102,17 @@ class EditEntry(LoginRequiredMixin, View):
         form = self.form_class(instance=entry, data=request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('my_notes:topic', args=(entry.topic.id,)))
+            return HttpResponseRedirect(
+                reverse("my_notes:topic", args=(entry.topic.id,))
+            )
 
 
 class DeleteEntry(LoginRequiredMixin, DeleteView):
-    login_url = '/users/login/'
+    login_url = "/users/login/"
     model = Entry
 
     def get_success_url(self):
-        entry_id = self.kwargs['pk']
+        entry_id = self.kwargs["pk"]
         topic = Entry.objects.get(pk=entry_id).topic
         topic_id = topic.id
-        return reverse_lazy('my_notes:topic', kwargs={'topic_id': topic_id})
-
+        return reverse_lazy("my_notes:topic", kwargs={"topic_id": topic_id})
